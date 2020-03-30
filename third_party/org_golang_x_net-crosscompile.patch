@@ -1,0 +1,42 @@
+diff -ruN a/ipv4/BUILD.bazel b/ipv4/BUILD.bazel
+--- ipv4/BUILD.bazel	2020-02-23 20:59:17.000000000 -0800
++++ ipv4/BUILD.bazel	2020-02-23 21:00:29.000000000 -0800
+@@ -71,15 +71,8 @@
+         "//bpf:go_default_library",
+         "//internal/iana:go_default_library",
+         "//internal/socket:go_default_library",
+-    ] + select({
+-        "@io_bazel_rules_go//go/platform:android": [
+-            "@org_golang_x_sys//unix:go_default_library",
+-        ],
+-        "@io_bazel_rules_go//go/platform:linux": [
+-            "@org_golang_x_sys//unix:go_default_library",
+-        ],
+-        "//conditions:default": [],
+-    }),
++        "@org_golang_x_sys//unix:go_default_library",
++    ],
+ )
+ 
+ go_test(
+diff -ruN a/ipv6/BUILD.bazel b/ipv6/BUILD.bazel
+--- ipv6/BUILD.bazel	2020-02-23 20:59:29.000000000 -0800
++++ ipv6/BUILD.bazel	2020-02-23 21:00:53.000000000 -0800
+@@ -70,15 +70,8 @@
+         "//bpf:go_default_library",
+         "//internal/iana:go_default_library",
+         "//internal/socket:go_default_library",
+-    ] + select({
+-        "@io_bazel_rules_go//go/platform:android": [
+-            "@org_golang_x_sys//unix:go_default_library",
+-        ],
+-        "@io_bazel_rules_go//go/platform:linux": [
+-            "@org_golang_x_sys//unix:go_default_library",
+-        ],
+-        "//conditions:default": [],
+-    }),
++        "@org_golang_x_sys//unix:go_default_library",
++    ],
+ )
+ 
+ go_test(

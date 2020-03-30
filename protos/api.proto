@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package api;
+
+option go_package = "github.com/grahamjenson/bazel-golang-wasm-protoc/protos/api";
+
+message Instance {
+	string name = 1;
+  string instance_type = 2;
+  float ecu = 3;
+  float memory = 4;
+  string network = 5;
+  string  price = 6;
+}
+
+message Instances {
+  repeated Instance instances = 1;
+}
+
+message SearchRequest {
+  string query = 1;
+}
+
+service Api {
+  rpc Search (SearchRequest) returns (Instances);
+}

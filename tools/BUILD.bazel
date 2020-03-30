@@ -1,0 +1,23 @@
+package(default_visibility = ["//visibility:public"])
+
+load("@io_bazel_rules_go//proto:compiler.bzl", "go_proto_compiler")
+
+go_proto_compiler(
+    name = "go_server",
+    import_path_option = True,
+    options = ["plugins=server"],
+    plugin = "//tools/protoc-gen-server",
+    suffix = ".pb.server.go",
+    visibility = ["//visibility:public"],
+    deps = [],
+)
+
+go_proto_compiler(
+    name = "go_client",
+    import_path_option = True,
+    options = ["plugins=client"],
+    plugin = "//tools/protoc-gen-client",
+    suffix = ".pb.client.go",
+    visibility = ["//visibility:public"],
+    deps = [],
+)
