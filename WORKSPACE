@@ -30,6 +30,10 @@ git_repository(
     commit = "09745575a923640154bcf307fba8aedff47f240a",
     remote = "https://github.com/protocolbuffers/protobuf",
     shallow_since = "1558721209 -0700",
+    patches = [
+        "//third_party:0001-Updates-the-zlib-version-in-use-to-1.2.13.patch",
+    ],
+    patch_args = [ "-p1" ],
 )
 
 http_archive(

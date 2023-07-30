@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/grahamjenson/bazel-golang-wasm-protoc/protos/api"
+
+	"github.com/grahamjenson/bazel-golang-wasm-proto/protos/api"
 	"github.com/maxence-charriere/go-app/v6/pkg/app"
 )
 

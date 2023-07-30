@@ -1,0 +1,1 @@
+../../bazel-bin/protos/api/linux_amd64_stripped/api_go_proto%/github.com/grahamjenson/bazel-golang-wasm-proto/protos/api/api.pb.client.go

@@ -3,9 +3,10 @@ package server
 import (
 	"context"
 	"encoding/json"
-	"github.com/grahamjenson/bazel-golang-wasm-protoc/protos/api"
 	"io/ioutil"
 	"strings"
+
+	"github.com/grahamjenson/bazel-golang-wasm-proto/protos/api"
 )
 
 ////
