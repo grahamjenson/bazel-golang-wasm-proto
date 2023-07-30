@@ -1,4 +1,4 @@
-module github.com/grahamjenson/bazel-golang-wasm-protoc
+module github.com/grahamjenson/bazel-golang-wasm-proto
 
 require (
 	github.com/lyft/protoc-gen-star v0.4.14

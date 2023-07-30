@@ -15,7 +15,7 @@ go_proto_library(
         "//tools:go_server",  # keep
         "//tools:go_client",  # keep
     ],
-    importpath = "github.com/grahamjenson/bazel-golang-wasm-protoc/protos/api",
+    importpath = "github.com/grahamjenson/bazel-golang-wasm-proto/protos/api",
     proto = ":api_proto",
     visibility = ["//visibility:public"],
 )
@@ -23,6 +23,6 @@ go_proto_library(
 go_library(
     name = "go_default_library",
     embed = [":api_go_proto"],
-    importpath = "github.com/grahamjenson/bazel-golang-wasm-protoc/protos/api",
+    importpath = "github.com/grahamjenson/bazel-golang-wasm-proto/protos/api",
     visibility = ["//visibility:public"],
 )

@@ -1,15 +1,32 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	"github.com/grahamjenson/bazel-golang-wasm-protoc/protos/api"
-	"github.com/grahamjenson/bazel-golang-wasm-protoc/server"
-	"github.com/maxence-charriere/go-app/v6/pkg/app"
 	"log"
 	"net/http"
+
+	"github.com/grahamjenson/bazel-golang-wasm-proto/protos/api"
+	"github.com/grahamjenson/bazel-golang-wasm-proto/server"
+	"github.com/maxence-charriere/go-app/v6/pkg/app"
+)
+
+var (
+	bootstrapLoc = flag.String("bootstrap-css-path", "", "path to the bootstrap.css file")
+	wasmLoc      = flag.String("wasm-path", "", "path to the web app wasm file")
 )
 
 func main() {
+	flag.Parse()
+
+	// Since locations of these files may vary over bazel versions,
+	// this is one way to ensure they keep working.
+	if *bootstrapLoc == "" {
+		log.Fatalf("The flag --bootstrap-css-path is required.")
+	}
+	if *wasmLoc == "" {
+		log.Fatalf("The flag --bootstrap-css-path is required.")
+	}
 	mux := http.NewServeMux()
 
 	app := &app.Handler{
@@ -19,11 +36,11 @@ func main() {
 	}
 
 	mux.HandleFunc("/app.wasm", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "wasm/js_wasm_pure_stripped/app.wasm")
+		http.ServeFile(w, r, *wasmLoc)
 	})
 
 	mux.HandleFunc("/bootstrap.css", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "external/com_github_bootstrap/file/bootstrap.css")
+		http.ServeFile(w, r, *bootstrapLoc)
 	})
 
 	// Handle API

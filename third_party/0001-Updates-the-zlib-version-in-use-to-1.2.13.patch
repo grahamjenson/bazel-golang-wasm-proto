@@ -1,0 +1,30 @@
+From 4935ed1941b99105634d06920e20d94842738def Mon Sep 17 00:00:00 2001
+From: Filip Filmar <fmil@google.com>
+Date: Sun, 30 Jul 2023 14:24:18 -0700
+Subject: [PATCH] Updates the zlib version in use to 1.2.13
+
+Version 1.2.11 was retracted due to a security vulnerability.
+---
+ protobuf_deps.bzl | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/protobuf_deps.bzl b/protobuf_deps.bzl
+index 25fad7253..484dcc051 100644
+--- a/protobuf_deps.bzl
++++ b/protobuf_deps.bzl
+@@ -9,7 +9,9 @@ def protobuf_deps():
+         http_archive(
+             name = "zlib",
+             build_file = "@com_google_protobuf//:third_party/zlib.BUILD",
+-            sha256 = "c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1",
+-            strip_prefix = "zlib-1.2.11",
+-            urls = ["https://zlib.net/zlib-1.2.11.tar.gz"],
++            # zlib-1.2.11 was removed due to
++            # https://nvd.nist.gov/vuln/detail/CVE-2022-37434
++            sha256 = "b3a24de97a8fdbc835b9833169501030b8977031bcb54b3b3ac13740f846ab30",
++            strip_prefix = "zlib-1.2.13",
++            urls = ["https://zlib.net/zlib-1.2.13.tar.gz"],
+         )
+-- 
+2.41.0.487.g6d72f3e995-goog
+
