@@ -1,60 +1,89 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"log"
+	"net/http"
 
 	"github.com/grahamjenson/bazel-golang-wasm-proto/protos/api"
-	"github.com/maxence-charriere/go-app/v6/pkg/app"
+	"github.com/grahamjenson/bazel-golang-wasm-proto/server"
+	"github.com/maxence-charriere/go-app/v9/pkg/app"
+)
+
+var (
+	bootstrapLoc = flag.String("bootstrap-css-path", "", "path to the bootstrap.css file")
+	wasmLoc      = flag.String("wasm-path", "", "path to the web app wasm file")
+	iconLoc      = flag.String("icon-path", "", "path to the icon")
+	port         = flag.Int("port", 7000, "default port to use")
 )
 
 func main() {
-	manager := &Manager{
-		searchBar:     &SearchBar{},
-		instanceTable: &InstanceTable{},
+	app.RouteFunc("/", func() app.Composer {
+		// Note that app.Route can not be used to initialize `manager` correctly.
+		// This is confusing, but seems to be go-app design choice.
+		// See: https://github.com/maxence-charriere/go-app/issues/853
+		manager := Manager{
+			SearchBar:     &SearchBar{},
+			InstanceTable: &InstanceTable{},
+		}
+		manager.SearchBar.SetManager(&manager)
+		manager.InstanceTable.SetManager(&manager)
+		return &manager
+	})
+	app.RunWhenOnBrowser()
+
+	// This is the server part.
+	// Unclear why the below has to be in this file, but
+	// otherwise it does not work.
+	flag.Parse()
+
+	// Since locations of these files may vary over bazel versions,
+	// this is one way to ensure they keep working.
+	if *bootstrapLoc == "" {
+		log.Fatalf("The flag --bootstrap-css-path is required.")
+	}
+	if *wasmLoc == "" {
+		log.Fatalf("The flag --bootstrap-css-path is required.")
 	}
 
-	manager.searchBar.SetManager(manager)
-	manager.instanceTable.SetManager(manager)
+	app := &app.Handler{
+		Title:  "EC2Instances",
+		Author: "Graham Jenson",
+		Styles: []string{"/web/bootstrap.css"},
+		Icon: app.Icon{
+			// Not setting the icon defaults it to go-app icon which is not
+			// fetchable due to CORS blocking.
+			Default: "/web/icon.png",
+		},
+	}
 
-	app.Route("/", manager)
-	app.Run()
-}
+	mux := http.NewServeMux()
 
-// Manager is the main controller of this application, also the root Body
-type Manager struct {
-	app.Compo
-	searchBar     *SearchBar
-	instanceTable *InstanceTable
-}
-
-func (h *Manager) Render() app.UI {
-	return app.Div().Body(
-		app.Header().Body(
-			app.Nav().Class("navbar navbar-expand-lg navbar-light bg-light").Body(
-				h.searchBar,
-			),
-		),
-		app.Div().Class("container-fluid").Body(
-			h.instanceTable,
-		),
-	)
-}
-
-func (h *Manager) Search(q string) []*api.Instance {
-	instances, err := api.CallApiSearch(api.SearchRequest{
-		Query: q,
+	// In go-app v9, the static resources *must* be in `/web/...`.
+	mux.HandleFunc("/web/app.wasm", func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("handling %v\n", *wasmLoc)
+		http.ServeFile(w, r, *wasmLoc)
 	})
 
-	if err != nil {
-		fmt.Println("Search Error:", err)
-		return []*api.Instance{}
-	}
+	mux.HandleFunc("/web/icon.png", func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("handling %v\n", *iconLoc)
+		http.ServeFile(w, r, *iconLoc)
+	})
 
-	return instances.Instances
-}
+	mux.HandleFunc("/web/bootstrap.css", func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("handling %v\n", *bootstrapLoc)
+		// go-app v9 requires setting content type on CSS.
+		r.Header.Add("Content-Type", "text/css")
+		http.ServeFile(w, r, *bootstrapLoc)
+	})
 
-func (h *Manager) UpdateInstances(q string) {
-	instances := h.Search(q)
-	h.instanceTable.instances = instances
-	h.instanceTable.Update()
+	// Handle API
+	api.RegisterApiHTTPMux(mux, &server.Server{})
+
+	// Handle go-app
+	mux.Handle("/", app)
+
+	log.Printf("starting local server on http://localhost:%v\n", *port)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%v", *port), mux))
 }

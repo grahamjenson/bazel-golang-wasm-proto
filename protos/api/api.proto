@@ -2,10 +2,10 @@ syntax = "proto3";
 
 package api;
 
-option go_package = "github.com/grahamjenson/bazel-golang-wasm-protoc/protos/api";
+option go_package = "github.com/grahamjenson/bazel-golang-wasm-proto/protos/api";
 
 message Instance {
-	string name = 1;
+  string name = 1;
   string instance_type = 2;
   float ecu = 3;
   float memory = 4;
