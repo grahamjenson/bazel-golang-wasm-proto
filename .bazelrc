@@ -1,0 +1,6 @@
+# Allows temporary user settings to be placed here. From
+# https://bazel.build/configure/best-practices#bazelrc-file
+try-import %workspace%/user.bazelrc
+
+build --cxxopt=-std=c++14
+build --host_cxxopt=-std=c++14

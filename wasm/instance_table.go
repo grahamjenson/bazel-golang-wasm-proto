@@ -4,22 +4,26 @@ import (
 	"fmt"
 
 	"github.com/grahamjenson/bazel-golang-wasm-proto/protos/api"
-	"github.com/maxence-charriere/go-app/v6/pkg/app"
+	"github.com/maxence-charriere/go-app/v9/pkg/app"
 )
 
 type InstanceTable struct {
 	app.Compo
-	manager   *Manager
+	// Must be a pointer, or else the widget construction will end up incorrect.
+	Manager   *Manager
 	instances []*api.Instance
 }
 
 func (p *InstanceTable) SetManager(manager *Manager) {
-	p.manager = manager
+	p.Manager = manager
+	if p.Manager == nil {
+		panic("p.Manager == nil")
+	}
 }
 
 func (p *InstanceTable) Render() app.UI {
 
-	nodes := []app.Node{}
+	nodes := []app.UI{}
 	for _, i := range p.instances {
 		nodes = append(nodes, app.Tr().Body(
 			app.Td().Body(app.Text(i.Name)),
